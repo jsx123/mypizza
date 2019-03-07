@@ -1,0 +1,102 @@
+
+
+
+浏览器===>index.html===>main.js==>(vue.js,vue-router.js,App.vue)
+
+App.vue===>最大的组件（又叫做根组件），所有的组件都挂载在App.vue
+
+路由：HelloWorld.vue
+显示需要搭配<router-view />
+这个时候router-view 在哪里，helloworld内容就显示在哪里
+
+如果你想构建子组件，怎么写？
+
+一、在components内生成一个.vue结尾的文件 
+创建三部分内容
+template  
+script
+style ==>scoped保证当前样式只在当前组件生效
+
+二、引入组件至全局
+eg:
+2.1 引入
+import Home from '@/components/Home'
+2.2 声明当前组件
+components:{
+'Home':Home
+}
+
+
+
+
+三、
+所有页面的实现思路
+
+1.关于我们
+  二级路由+三极路由的嵌套
+  注意：path路径 与 router-link里的to  一一对应！！！
+  
+  嵌套时，无非就是children下再定义新路由数组即可 
+
+  注意：渲染图片的时候，所有路径要放置在static静态目录内。
+  如果没有放置在上述目录下，
+     1.1要通过import 将所有图片引入 
+     1.2要通过require将图片路径写入
+
+2.注册
+  渲染form表单 username +password +repassword
+  
+  点击注册按钮时，别忘了@click.prevent=“”，否则就跳转页面了，路径还会跟一个？
+  实现思路为：
+  下载axios ==>在main.js中import axios from 'axios'==>配置axios.defaults.baseURL="野狗云我的应用的路径https://...."
+  ==>在当前页面import axios ==>点击注册按钮时发送请求 axios.post('./user-jsx.json',formData),这个formData存储的是账号和密码    
+  ==>如果存储成功，跳转login,否则报账号密码错误
+
+3.登陆
+  渲染页面时，和注册的form表单渲染差不多，少一个重复验证密码
+  点击登陆按钮时
+  axios.get('./user-jsx.json')，注意：这个json数据要与注册时的保持一致
+  ==>判断当前输入的值是否与数据库值相匹配，判断的方式数组的filter，看当前的账号和密码能否匹配，
+  ==>如果result结果满足，验证成功，跳转管理页,否则登陆失败
+
+4.主页
+  渲染页面
+
+  1.组件渲染 import引入相关组件进行渲染
+  2.路由渲染 <router-view name="history" /> 这个name名与router/index.js内配置的保持一致，
+   如果路由页面配置，就能展示在当前路由页面！！！
+  
+
+
+5.Menu菜单页面
+   
+左菜品展示
+    1.mounted(){}==>通过axios.get('./menu-jsx.json')拿到相应的数据
+    2.渲染页面即可
+    3.添加购物车的按钮需要单独处理，
+      添加购物车的去重处理,数组的filer观察是否能找到满足项，是：直接+1 否：items.push(当前项)
+
+右购物车 
+    1.add 加& reduce 减 自己写入控制条件 ，需要注意：+最高不超10，减最低为1，小于1，调用数组splice删除这一项 
+
+    2.数据渲染 
+       2.1注意name和size的拼接 item.name-item.size 
+       2.2单品的总价：item.price *item.quantity
+       2.3运算的结果：总件数+ 总价格 
+
+6.管理admin页面
+
+NewPizza 添加新pizza
+
+   1.渲染页面：创建form表单
+   2.创建一个对应数据formData
+   3.通过axios.post('./menu-jsx.json',formData)
+   4.跳转对应的menu页面查看效果
+
+NewMenu 菜品管理
+   
+   1.通过mounted()挂载函数，来axios.get('./menu-jsx.json')
+   2.请求过来的数据只要name ,但想要去删除某一项数据库的值时，就必须要一个key值
+   3.请求过来的数据，循环遍历，把每一项的key值存储进id内
+   4.删除时只用axios.delete('./menu-jsx/key.json)就可以实现删除，删除成功跳转menu页面查看效果
+   
